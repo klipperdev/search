@@ -13,7 +13,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^7.4.0",
-        "symfony/http-foundation": "^4.3.0",
+        "symfony/http-foundation": "^4.4.0",
         "klipper/security-extra": "^2.0.0",
         "klipper/metadata": "^2.0.0",
         "klipper/doctrine-extensions-extra": "^2.0.0",
