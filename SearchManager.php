@@ -54,11 +54,6 @@ class SearchManager implements SearchManagerInterface
     protected $authChecker;
 
     /**
-     * @var OrganizationalContextInterface
-     */
-    protected $organizationalContext;
-
-    /**
      * @var RequestPaginationQuery
      */
     protected $requestPagination;
@@ -74,6 +69,11 @@ class SearchManager implements SearchManagerInterface
     protected $requestSortable;
 
     /**
+     * @var null|OrganizationalContextInterface
+     */
+    protected $organizationalContext;
+
+    /**
      * @var null|string[]
      */
     protected $cacheObjects;
@@ -81,33 +81,33 @@ class SearchManager implements SearchManagerInterface
     /**
      * Constructor.
      *
-     * @param MetadataManagerInterface       $metadataManager       The metadata manager
-     * @param PermissionManagerInterface     $permissionManager     The permission manager
-     * @param ManagerRegistry                $registry              The doctrine registry
-     * @param AuthorizationCheckerInterface  $authChecker           The authorization checker
-     * @param OrganizationalContextInterface $organizationalContext The organizational context
-     * @param RequestPaginationQuery         $requestPagination     The request pagination query
-     * @param RequestFilterableQuery         $requestFilterable     The request filterable query
-     * @param RequestSortableQuery           $requestSortable       The request sortable query
+     * @param MetadataManagerInterface            $metadataManager       The metadata manager
+     * @param PermissionManagerInterface          $permissionManager     The permission manager
+     * @param ManagerRegistry                     $registry              The doctrine registry
+     * @param AuthorizationCheckerInterface       $authChecker           The authorization checker
+     * @param RequestPaginationQuery              $requestPagination     The request pagination query
+     * @param RequestFilterableQuery              $requestFilterable     The request filterable query
+     * @param RequestSortableQuery                $requestSortable       The request sortable query
+     * @param null|OrganizationalContextInterface $organizationalContext The organizational context
      */
     public function __construct(
         MetadataManagerInterface $metadataManager,
         PermissionManagerInterface $permissionManager,
         ManagerRegistry $registry,
         AuthorizationCheckerInterface $authChecker,
-        OrganizationalContextInterface $organizationalContext,
         RequestPaginationQuery $requestPagination,
         RequestFilterableQuery $requestFilterable,
-        RequestSortableQuery $requestSortable
+        RequestSortableQuery $requestSortable,
+        ?OrganizationalContextInterface $organizationalContext
     ) {
         $this->metadataManager = $metadataManager;
         $this->permissionManager = $permissionManager;
         $this->registry = $registry;
         $this->authChecker = $authChecker;
-        $this->organizationalContext = $organizationalContext;
         $this->requestPagination = $requestPagination;
         $this->requestFilterable = $requestFilterable;
         $this->requestSortable = $requestSortable;
+        $this->organizationalContext = $organizationalContext;
     }
 
     /**
@@ -293,7 +293,7 @@ class SearchManager implements SearchManagerInterface
      */
     private function isValidContext(ObjectMetadataInterface $metadata): bool
     {
-        if ($this->organizationalContext->isOrganization()) {
+        if ($this->organizationalContext && $this->organizationalContext->isOrganization()) {
             return \in_array(MetadataContexts::ORGANIZATION, $metadata->getAvailableContexts(), true);
         }
 
