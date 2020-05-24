@@ -11,10 +11,10 @@
 
 namespace Klipper\Component\Search;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
 use Klipper\Component\DoctrineExtensionsExtra\Filterable\RequestFilterableQuery;
 use Klipper\Component\DoctrineExtensionsExtra\Model\Traits\TranslatableInterface;
 use Klipper\Component\DoctrineExtensionsExtra\Pagination\RequestPaginationQuery;
