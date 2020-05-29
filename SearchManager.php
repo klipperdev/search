@@ -238,7 +238,7 @@ class SearchManager implements SearchManagerInterface
             foreach ($this->metadataManager->all() as $metadata) {
                 if ($metadata->isPublic() && $metadata->isSearchable()
                         && $this->isValidContext($metadata)
-                        && $this->authChecker->isGranted('perm_view', $metadata->getClass())) {
+                        && $this->authChecker->isGranted('perm:view', $metadata->getClass())) {
                     $config = $this->permissionManager->hasConfig($metadata->getClass())
                         ? $this->permissionManager->getConfig($metadata->getClass())
                         : null;
