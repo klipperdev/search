@@ -26,6 +26,7 @@ use Klipper\Component\Metadata\ObjectMetadataInterface;
 use Klipper\Component\Search\Exception\InvalidArgumentException;
 use Klipper\Component\Security\Organizational\OrganizationalContextInterface;
 use Klipper\Component\Security\Permission\PermissionManagerInterface;
+use Klipper\Component\Security\Permission\PermVote;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -238,7 +239,7 @@ class SearchManager implements SearchManagerInterface
             foreach ($this->metadataManager->all() as $metadata) {
                 if ($metadata->isPublic() && $metadata->isSearchable()
                         && $this->isValidContext($metadata)
-                        && $this->authChecker->isGranted('perm:view', $metadata->getClass())) {
+                        && $this->authChecker->isGranted(new PermVote('view'), $metadata->getClass())) {
                     $config = $this->permissionManager->hasConfig($metadata->getClass())
                         ? $this->permissionManager->getConfig($metadata->getClass())
                         : null;
