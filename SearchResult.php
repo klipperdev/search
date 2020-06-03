@@ -18,14 +18,9 @@ use Klipper\Component\DoctrineExtensionsExtra\Representation\Pagination;
  */
 class SearchResult extends Pagination implements SearchResultInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
-     * Constructor.
-     *
      * @param string   $name    The object name
      * @param object[] $results The results
      * @param null|int $page    The page number
@@ -40,9 +35,6 @@ class SearchResult extends Pagination implements SearchResultInterface
         parent::__construct($results, $page, $limit, $pages, $total);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->name;

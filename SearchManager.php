@@ -34,54 +34,28 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class SearchManager implements SearchManagerInterface
 {
-    /**
-     * @var MetadataManagerInterface
-     */
-    protected $metadataManager;
+    protected MetadataManagerInterface $metadataManager;
 
-    /**
-     * @var PermissionManagerInterface
-     */
-    protected $permissionManager;
+    protected PermissionManagerInterface $permissionManager;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    protected ManagerRegistry $registry;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    protected $authChecker;
+    protected AuthorizationCheckerInterface $authChecker;
 
-    /**
-     * @var RequestPaginationQuery
-     */
-    protected $requestPagination;
+    protected RequestPaginationQuery $requestPagination;
 
-    /**
-     * @var RequestFilterableQuery
-     */
-    protected $requestFilterable;
+    protected RequestFilterableQuery $requestFilterable;
 
-    /**
-     * @var RequestSortableQuery
-     */
-    protected $requestSortable;
+    protected RequestSortableQuery $requestSortable;
 
-    /**
-     * @var null|OrganizationalContextInterface
-     */
-    protected $organizationalContext;
+    protected ?OrganizationalContextInterface $organizationalContext;
 
     /**
      * @var null|string[]
      */
-    protected $cacheObjects;
+    protected ?array $cacheObjects = null;
 
     /**
-     * Constructor.
-     *
      * @param MetadataManagerInterface            $metadataManager       The metadata manager
      * @param PermissionManagerInterface          $permissionManager     The permission manager
      * @param ManagerRegistry                     $registry              The doctrine registry
@@ -111,9 +85,6 @@ class SearchManager implements SearchManagerInterface
         $this->organizationalContext = $organizationalContext;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function searchByObject(string $object, string $query): SearchResultInterface
     {
         $results = $this->search($query, [$object]);
@@ -125,9 +96,6 @@ class SearchManager implements SearchManagerInterface
         return $results->getObject($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function search(string $query, array $objects = []): SearchResultsInterface
     {
         $words = empty($query) ? [] : array_map('trim', explode(' ', $query));
