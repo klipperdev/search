@@ -117,6 +117,8 @@ class SearchManager implements SearchManagerInterface
      * @param string   $class    The class name
      * @param string[] $words    The words
      * @param bool     $lockPage Check if the request is locked on first page
+     *
+     * @throws
      */
     protected function searchObject(string $object, string $class, array $words, bool $lockPage): SearchResult
     {
