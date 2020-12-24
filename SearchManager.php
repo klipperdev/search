@@ -85,9 +85,9 @@ class SearchManager implements SearchManagerInterface
         $this->organizationalContext = $organizationalContext;
     }
 
-    public function searchByObject(string $object, string $query): SearchResultInterface
+    public function searchByObject(string $object, string $query, array $queryFields = []): SearchResultInterface
     {
-        $results = $this->search($query, [$object]);
+        $results = $this->search($query, [$object], $queryFields);
 
         if (!$results->hasObject($object)) {
             throw new InvalidArgumentException(sprintf('The "%s" object doesn\'t exist', $object));
@@ -96,7 +96,7 @@ class SearchManager implements SearchManagerInterface
         return $results->getObject($object);
     }
 
-    public function search(string $query, array $objects = []): SearchResultsInterface
+    public function search(string $query, array $objects = [], array $queryFields = []): SearchResultsInterface
     {
         $words = empty($query) ? [] : array_map('trim', explode(' ', $query));
         $lockPage = 1 === \count($objects);
@@ -104,7 +104,7 @@ class SearchManager implements SearchManagerInterface
         $results = [];
 
         foreach ($objects as $object => $class) {
-            $results[$object] = $this->searchObject($object, $class, $words, $lockPage);
+            $results[$object] = $this->searchObject($object, $class, $words, $lockPage, $queryFields);
         }
 
         return new SearchResults($results);
@@ -113,14 +113,15 @@ class SearchManager implements SearchManagerInterface
     /**
      * Search in object.
      *
-     * @param string   $object   The object name
-     * @param string   $class    The class name
-     * @param string[] $words    The words
-     * @param bool     $lockPage Check if the request is locked on first page
+     * @param string   $object      The object name
+     * @param string   $class       The class name
+     * @param string[] $words       The words
+     * @param bool     $lockPage    Check if the request is locked on first page
+     * @param string[] $queryFields The query fields
      *
      * @throws
      */
-    protected function searchObject(string $object, string $class, array $words, bool $lockPage): SearchResult
+    protected function searchObject(string $object, string $class, array $words, bool $lockPage, array $queryFields = []): SearchResult
     {
         /** @var EntityRepository $repo */
         $repo = $this->registry->getRepository($class);
@@ -132,7 +133,7 @@ class SearchManager implements SearchManagerInterface
 
         if (!empty($words)) {
             $qb = $repo->createQueryBuilder($alias);
-            $this->injectFilter($qb, $class, $alias, $words);
+            $this->injectFilter($qb, $class, $alias, $words, $queryFields);
             $query = $qb->getQuery();
 
             $this->requestPagination->paginate($query, $lockPage);
@@ -227,12 +228,13 @@ class SearchManager implements SearchManagerInterface
     /**
      * Inject the filter in the query builder.
      *
-     * @param QueryBuilder $qb    The query builder for filter
-     * @param string       $class The class name
-     * @param string       $alias The alias
-     * @param string[]     $words The words
+     * @param QueryBuilder $qb          The query builder for filter
+     * @param string       $class       The class name
+     * @param string       $alias       The alias
+     * @param string[]     $words       The words
+     * @param string[]     $queryFields The query fields
      */
-    private function injectFilter(QueryBuilder $qb, string $class, string $alias, array $words): QueryBuilder
+    private function injectFilter(QueryBuilder $qb, string $class, string $alias, array $words, array $queryFields = []): QueryBuilder
     {
         $fields = $this->metadataManager->get($class)->getFields();
         $filter = '';
@@ -240,7 +242,9 @@ class SearchManager implements SearchManagerInterface
         foreach ($fields as $fieldMeta) {
             $field = $alias.'.'.$fieldMeta->getField();
 
-            if ($fieldMeta->isPublic() && $fieldMeta->isSearchable()) {
+            if ($fieldMeta->isPublic() && $fieldMeta->isSearchable()
+                && (empty($queryFields) || \in_array($fieldMeta->getName(), $queryFields, true))
+            ) {
                 $filter .= '' === $filter ? '(' : ' OR (';
 
                 foreach ($words as $i => $word) {

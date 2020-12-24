@@ -21,18 +21,20 @@ interface SearchManagerInterface
     /**
      * Search in one object.
      *
-     * @param string $object The object
-     * @param string $query  The query
+     * @param string   $object      The object
+     * @param string   $query       The query
+     * @param string[] $queryFields The query fields
      *
      * @throws InvalidArgumentException When the object doesn't exist
      */
-    public function searchByObject(string $object, string $query): SearchResultInterface;
+    public function searchByObject(string $object, string $query, array $queryFields = []): SearchResultInterface;
 
     /**
      * Search in objects.
      *
-     * @param string   $query   The query
-     * @param string[] $objects The objects
+     * @param string   $query       The query
+     * @param string[] $objects     The objects
+     * @param string[] $queryFields The query fields
      */
-    public function search(string $query, array $objects = []): SearchResultsInterface;
+    public function search(string $query, array $objects = [], array $queryFields = []): SearchResultsInterface;
 }
