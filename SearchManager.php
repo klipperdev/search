@@ -125,7 +125,7 @@ class SearchManager implements SearchManagerInterface
     {
         /** @var EntityRepository $repo */
         $repo = $this->registry->getRepository($class);
-        $alias = QueryUtil::getAlias($object);
+        $alias = '_'.$object;
         $total = 0;
         $results = [];
         $page = 1;
